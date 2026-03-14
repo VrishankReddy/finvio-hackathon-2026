@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Finvio Hackathon 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #050810;
+    --surface: #0b1120;
+    --surface2: #111827;
+    --green: #00ff88;
+    --green-dim: #00cc6a;
+    --green-glow: rgba(0,255,136,0.15);
+    --blue: #0ea5e9;
+    --gold: #fbbf24;
+    --silver: #94a3b8;
+    --bronze: #cd7f32;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --border: rgba(255,255,255,0.07);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(5,8,16,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.3rem;
+    color: var(--green);
+    letter-spacing: -0.5px;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem; color: var(--muted);
+    text-decoration: none; letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-cta {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+    background: var(--green); color: #050810;
+    border: none; padding: 0.6rem 1.4rem; border-radius: 4px;
+    font-weight: 600; cursor: pointer; text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.03em;
+  }
+  .nav-cta:hover { background: var(--green-dim); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 7rem 4rem 5rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+  }
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .hero-orb-1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,255,136,0.12) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    animation: pulse 6s ease-in-out infinite;
+  }
+  .hero-orb-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(14,165,233,0.08) 0%, transparent 70%);
+    bottom: 0; left: -50px;
+    animation: pulse 8s ease-in-out infinite reverse;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 860px; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    color: var(--green); letter-spacing: 0.12em; text-transform: uppercase;
+    background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2);
+    padding: 0.4rem 1rem; border-radius: 100px;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.6s ease both;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%; background: var(--green);
+    animation: blink 1.5s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 800; line-height: 1.0;
+    letter-spacing: -2px;
+    animation: fadeInDown 0.6s 0.1s ease both;
+  }
+  .hero-title .accent { color: var(--green); }
+  .hero-title .dim { color: var(--muted); }
+  .hero-sub {
+    margin-top: 1.8rem;
+    font-size: 1.15rem; color: var(--muted); line-height: 1.7;
+    max-width: 560px;
+    animation: fadeInDown 0.6s 0.2s ease both;
+  }
+  .hero-meta {
+    display: flex; gap: 2rem; margin-top: 2.5rem; flex-wrap: wrap;
+    animation: fadeInDown 0.6s 0.3s ease both;
+  }
+  .meta-item {
+    display: flex; flex-direction: column; gap: 0.2rem;
+  }
+  .meta-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .meta-value {
+    font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+    color: var(--text);
+  }
+  .meta-value.green { color: var(--green); }
+  .hero-actions {
+    display: flex; gap: 1rem; margin-top: 3rem; flex-wrap: wrap;
+    animation: fadeInDown 0.6s 0.4s ease both;
+  }
+  .btn-primary {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+    background: var(--green); color: #050810;
+    padding: 1rem 2.4rem; border-radius: 6px; border: none;
+    cursor: pointer; text-decoration: none;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;
+    box-shadow: 0 0 40px rgba(0,255,136,0.3);
+  }
+  .btn-primary:hover { background: var(--green-dim); transform: translateY(-2px); box-shadow: 0 0 60px rgba(0,255,136,0.4); }
+  .btn-secondary {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+    background: transparent; color: var(--text);
+    padding: 1rem 2.4rem; border-radius: 6px;
+    border: 1px solid var(--border); cursor: pointer; text-decoration: none;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* COUNTDOWN */
+  .countdown-section {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 4rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .countdown-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;
+    color: var(--green); text-transform: uppercase; letter-spacing: 0.15em;
+  }
+  .countdown-timer {
+    display: flex; gap: 1.5rem; align-items: center;
+  }
+  .time-block {
+    display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  }
+  .time-num {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1;
+    color: var(--text);
+    background: var(--surface2);
+    padding: 0.5rem 1rem; border-radius: 8px;
+    border: 1px solid var(--border);
+    min-width: 90px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .time-num::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.04), transparent);
+    pointer-events: none;
+  }
+  .time-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .time-sep {
+    font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800;
+    color: var(--green); margin-top: -0.8rem;
+    animation: blink 1s step-end infinite;
+  }
+  .deadline-note {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem;
+    color: var(--muted); text-align: right;
+    line-height: 1.6;
+  }
+  .deadline-note strong { color: var(--text); display: block; margin-bottom: 0.2rem; }
+
+  /* SECTIONS */
+  section { padding: 6rem 4rem; }
+  .section-tag {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    color: var(--green); text-transform: uppercase; letter-spacing: 0.15em;
+    margin-bottom: 1rem; display: block;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800; letter-spacing: -1px; line-height: 1.1;
+    margin-bottom: 1.2rem;
+  }
+  .section-desc {
+    color: var(--muted); font-size: 1.05rem; line-height: 1.7;
+    max-width: 580px;
+  }
+
+  /* ABOUT / RULES GRID */
+  .rules-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+    margin-top: 4rem;
+  }
+  .rule-card {
+    background: var(--surface);
+    padding: 2.5rem 2rem;
+    transition: background 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .rule-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--green), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .rule-card:hover { background: var(--surface2); }
+  .rule-card:hover::before { opacity: 1; }
+  .rule-icon {
+    font-size: 2rem; margin-bottom: 1rem; display: block;
+  }
+  .rule-card h3 {
+    font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 0.7rem; color: var(--text);
+  }
+  .rule-card p { font-size: 0.92rem; color: var(--muted); line-height: 1.65; }
+  .rule-card .highlight { color: var(--green); font-weight: 600; }
+
+  /* PRIZES */
+  .prizes-section { background: var(--surface); }
+  .prizes-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2rem; margin-top: 4rem;
+  }
+  .prize-card {
+    border-radius: 16px; padding: 3rem 2rem; text-align: center;
+    position: relative; overflow: hidden;
+    border: 1px solid var(--border);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .prize-card:hover { transform: translateY(-8px); }
+  .prize-card.gold {
+    background: linear-gradient(145deg, #1a1500, #0b1120);
+    border-color: var(--gold);
+    box-shadow: 0 0 60px rgba(251,191,36,0.15);
+  }
+  .prize-card.gold:hover { box-shadow: 0 0 80px rgba(251,191,36,0.25); }
+  .prize-card.silver {
+    background: linear-gradient(145deg, #0d1520, #0b1120);
+    border-color: var(--silver);
+  }
+  .prize-card.bronze {
+    background: linear-gradient(145deg, #150e08, #0b1120);
+    border-color: var(--bronze);
+  }
+  .prize-medal { font-size: 4rem; display: block; margin-bottom: 1.2rem; }
+  .prize-rank {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    margin-bottom: 0.6rem;
+  }
+  .prize-card.gold .prize-rank { color: var(--gold); }
+  .prize-card.silver .prize-rank { color: var(--silver); }
+  .prize-card.bronze .prize-rank { color: var(--bronze); }
+  .prize-title {
+    font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  .prize-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+  .prize-badge {
+    display: inline-block; margin-top: 1.5rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    color: var(--green); background: rgba(0,255,136,0.08);
+    border: 1px solid rgba(0,255,136,0.2);
+    padding: 0.4rem 1rem; border-radius: 100px;
+  }
+  .participation-note {
+    margin-top: 3rem;
+    background: rgba(0,255,136,0.05);
+    border: 1px solid rgba(0,255,136,0.15);
+    border-radius: 12px; padding: 2rem 2.5rem;
+    display: flex; align-items: center; gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .participation-note .icon { font-size: 2.5rem; }
+  .participation-note h4 {
+    font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+    color: var(--green); margin-bottom: 0.3rem;
+  }
+  .participation-note p { font-size: 0.92rem; color: var(--muted); }
+
+  /* HOW TO SUBMIT */
+  .steps-row {
+    display: flex; gap: 0; margin-top: 4rem;
+    position: relative;
+  }
+  .steps-row::before {
+    content: '';
+    position: absolute; top: 2.5rem; left: calc(16.666% - 0px); right: calc(16.666%);
+    height: 1px; background: linear-gradient(90deg, var(--green), var(--blue), var(--green));
+    opacity: 0.3;
+  }
+  .step {
+    flex: 1; text-align: center; padding: 0 1.5rem;
+    position: relative;
+  }
+  .step-num {
+    width: 50px; height: 50px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+    margin: 0 auto 1.5rem;
+    background: var(--surface2); border: 2px solid var(--green);
+    color: var(--green); position: relative; z-index: 1;
+    box-shadow: 0 0 20px rgba(0,255,136,0.2);
+  }
+  .step h3 {
+    font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+  .step p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+  .step .step-cta {
+    display: inline-block; margin-top: 1rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    color: var(--green); text-decoration: none;
+    border-bottom: 1px solid rgba(0,255,136,0.3);
+    padding-bottom: 1px; transition: border-color 0.2s;
+  }
+  .step .step-cta:hover { border-color: var(--green); }
+
+  /* ORGANIZER */
+  .organizer-section { background: var(--surface); }
+  .organizer-card {
+    background: var(--bg);
+    border: 1px solid var(--border); border-radius: 16px;
+    padding: 3rem; max-width: 520px;
+    display: flex; gap: 2rem; align-items: flex-start;
+    margin-top: 3rem;
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .organizer-card:hover { border-color: rgba(0,255,136,0.3); }
+  .organizer-card::after {
+    content: '';
+    position: absolute; bottom: -40px; right: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,255,136,0.06), transparent 70%);
+  }
+  .organizer-avatar {
+    width: 64px; height: 64px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--green), var(--blue));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;
+    color: #050810;
+  }
+  .organizer-info { flex: 1; }
+  .organizer-name {
+    font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
+    margin-bottom: 0.2rem;
+  }
+  .organizer-role {
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem;
+    color: var(--green); text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 0.8rem;
+  }
+  .organizer-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+  .organizer-contact {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    margin-top: 1rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;
+    color: var(--text); text-decoration: none;
+    background: var(--surface);
+    padding: 0.5rem 1rem; border-radius: 6px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .organizer-contact:hover { border-color: var(--green); color: var(--green); }
+
+  /* FAQ */
+  .faq-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem; margin-top: 3rem;
+  }
+  .faq-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 2rem;
+    transition: border-color 0.2s;
+  }
+  .faq-item:hover { border-color: rgba(0,255,136,0.2); }
+  .faq-q {
+    font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+    margin-bottom: 0.8rem; display: flex; gap: 0.8rem; align-items: flex-start;
+  }
+  .faq-q::before {
+    content: 'Q';
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    color: var(--green); background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.2);
+    width: 22px; height: 22px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .faq-a { font-size: 0.9rem; color: var(--muted); line-height: 1.65; padding-left: 2rem; }
+
+  /* CTA FOOTER */
+  .cta-section {
+    text-align: center; padding: 8rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 800px; height: 400px;
+    background: radial-gradient(ellipse, rgba(0,255,136,0.07), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-section .section-title { font-size: clamp(2.5rem, 5vw, 4rem); }
+  .cta-section .section-desc { margin: 1.5rem auto 3rem; text-align: center; }
+  .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .deadline-chip {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem;
+    color: var(--gold); background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.2);
+    padding: 0.5rem 1.2rem; border-radius: 100px;
+    margin-bottom: 2rem;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    color: var(--green); font-size: 1.1rem;
+    text-decoration: none;
+  }
+  .footer-logo span { color: var(--muted); font-weight: 400; font-size: 0.85rem; }
+  footer p { font-size: 0.82rem; color: var(--muted); }
+  footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  footer a:hover { color: var(--green); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--green); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 7rem 1.5rem 4rem; }
+    section { padding: 4rem 1.5rem; }
+    .countdown-section { padding: 2.5rem 1.5rem; flex-direction: column; align-items: flex-start; }
+    .countdown-timer { gap: 0.8rem; }
+    .time-num { min-width: 68px; font-size: 2.2rem; padding: 0.4rem 0.7rem; }
+    .prizes-row { grid-template-columns: 1fr; }
+    .steps-row { flex-direction: column; gap: 2rem; }
+    .steps-row::before { display: none; }
+    footer { padding: 2rem 1.5rem; }
+    .cta-section { padding: 5rem 1.5rem; }
+    .deadline-note { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">finvio<span> hackathon</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#prizes">Prizes</a></li>
+    <li><a href="#submit">Submit</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#organizer">Organizer</a></li>
+  </ul>
+  <a class="nav-cta" href="https://forms.gle/UCufHNzthV8aq9ys6" target="_blank">Submit Project →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Finvio Presents · Hackathon 2026</div>
+    <h1 class="hero-title">
+      Code<br/>
+      <span class="accent">Anything.</span><br/>
+      <span class="dim">Win Everything.</span>
+    </h1>
+    <p class="hero-sub">
+      A 3-month open hackathon for students worldwide. No registration, no restrictions — just build something and submit. Big or small, solo or team, any language.
+    </p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">Duration</span>
+        <span class="meta-value">3 Months</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Deadline</span>
+        <span class="meta-value green">May 24, 2026</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Participants</span>
+        <span class="meta-value">Unlimited ∞</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Registration</span>
+        <span class="meta-value">Not Required</span>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a class="btn-primary" href="https://forms.gle/UCufHNzthV8aq9ys6" target="_blank">Submit Your Project ↗</a>
+      <a class="btn-secondary" href="#about">Learn More ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- COUNTDOWN -->
+<div class="countdown-section">
+  <span class="countdown-label">⏳ Time Remaining to Submit</span>
+  <div class="countdown-timer">
+    <div class="time-block">
+      <div class="time-num" id="days">00</div>
+      <span class="time-label">Days</span>
+    </div>
+    <div class="time-sep">:</div>
+    <div class="time-block">
+      <div class="time-num" id="hours">00</div>
+      <span class="time-label">Hours</span>
+    </div>
+    <div class="time-sep">:</div>
+    <div class="time-block">
+      <div class="time-num" id="minutes">00</div>
+      <span class="time-label">Mins</span>
+    </div>
+    <div class="time-sep">:</div>
+    <div class="time-block">
+      <div class="time-num" id="seconds">00</div>
+      <span class="time-label">Secs</span>
+    </div>
+  </div>
+  <div class="deadline-note">
+    <strong>Submission Deadline</strong>
+    May 24, 2026 · No Late Penalties
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <span class="section-tag">// about the hackathon</span>
+  <h2 class="section-title">The most open hackathon<br/>you'll ever join.</h2>
+  <p class="section-desc">We believe creativity matters more than rules. Submit any project, any size, in any language. There are zero barriers to entry.</p>
+  <div class="rules-grid">
+    <div class="rule-card">
+      <span class="rule-icon">⚡</span>
+      <h3>Any Language, Any Project</h3>
+      <p>Python, JavaScript, C++, Rust, Scratch — we literally accept everything. A terminal game, a web app, a script that prints "Hello World" — <span class="highlight">it all counts.</span></p>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">👥</span>
+      <h3>Solo or Team — No Limits</h3>
+      <p>Work alone or bring your whole classroom. <span class="highlight">No cap on team size.</span> Collaborate however you like, then submit together via the Google Form.</p>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">📅</span>
+      <h3>Submit Anytime</h3>
+      <p>The hackathon runs for 3 months. Submit on day one or the final day — <span class="highlight">no penalties for late submission.</span> You have until May 24, 2026.</p>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">🚫</span>
+      <h3>No Registration Needed</h3>
+      <p><span class="highlight">Skip the signup forms.</span> Just go straight to the Google Form when you're ready to submit. No account, no pre-registration — nothing.</p>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">🏫</span>
+      <h3>Open to All Students</h3>
+      <p>Whether you're in school, college, or university — anywhere in the world — you're welcome. <span class="highlight">Unlimited participants.</span> The more, the merrier.</p>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">🌱</span>
+      <h3>Big or Small, Just Ship It</h3>
+      <p>Don't overthink it. A 50-line script is as valid as a full-stack app. <span class="highlight">The point is to build and share.</span> Creativity and effort matter most.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRIZES -->
+<section id="prizes" class="prizes-section">
+  <span class="section-tag">// prizes & recognition</span>
+  <h2 class="section-title">Winners take home<br/>more than glory.</h2>
+  <p class="section-desc">Top 3 projects receive medals and certificates. Every single participant gets recognized for showing up and shipping.</p>
+  <div class="prizes-row">
+    <div class="prize-card silver">
+      <span class="prize-medal">🥈</span>
+      <div class="prize-rank">2nd Place</div>
+      <div class="prize-title">Silver Medal</div>
+      <p class="prize-desc">A prestigious silver medal awarded to the second-place project, along with a Certificate of Winning.</p>
+      <span class="prize-badge">🏅 Medal + Certificate</span>
+    </div>
+    <div class="prize-card gold">
+      <span class="prize-medal">🥇</span>
+      <div class="prize-rank">1st Place · Grand Winner</div>
+      <div class="prize-title">Gold Medal</div>
+      <p class="prize-desc">The top project earns the coveted gold medal and a Certificate of Winning from Finvio. The ultimate recognition.</p>
+      <span class="prize-badge">🏆 Medal + Certificate</span>
+    </div>
+    <div class="prize-card bronze">
+      <span class="prize-medal">🥉</span>
+      <div class="prize-rank">3rd Place</div>
+      <div class="prize-title">Bronze Medal</div>
+      <p class="prize-desc">The third-place project takes home a bronze medal and a Certificate of Winning.</p>
+      <span class="prize-badge">🎖 Medal + Certificate</span>
+    </div>
+  </div>
+  <div class="participation-note">
+    <div class="icon">📜</div>
+    <div>
+      <h4>Everyone Gets a Certificate</h4>
+      <p>Every participant who submits a project — regardless of ranking — receives an official <strong>Certificate of Participation</strong> from Finvio. You showed up. That deserves recognition.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO SUBMIT -->
+<section id="submit">
+  <span class="section-tag">// how to participate</span>
+  <h2 class="section-title">Three steps.<br/>That's literally it.</h2>
+  <p class="section-desc">No signups. No approvals. Just build and submit through our Google Form before May 24, 2026.</p>
+  <div class="steps-row">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Build Your Project</h3>
+      <p>Code anything — an app, a script, a game, a tool. Any language, any size. Solo or with a team of any size.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Fill the Google Form</h3>
+      <p>Head to our submission form and fill in your project details. No account needed. Submit anytime during the hackathon.</p>
+      <a class="step-cta" href="https://forms.gle/UCufHNzthV8aq9ys6" target="_blank">Open Submission Form ↗</a>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Get Recognized</h3>
+      <p>All participants receive a Certificate of Participation. Top 3 projects are awarded medals and a Certificate of Winning.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ORGANIZER -->
+<section id="organizer" class="organizer-section">
+  <span class="section-tag">// organized by</span>
+  <h2 class="section-title">Meet the organizer.</h2>
+  <div class="organizer-card">
+    <div class="organizer-avatar">VR</div>
+    <div class="organizer-info">
+      <div class="organizer-name">Vrishank Reddy</div>
+      <div class="organizer-role">Founder & CEO, Finvio</div>
+      <p class="organizer-desc">
+        Vrishank is the founder of Finvio — an AI-powered personal finance app built for students and families. This hackathon is Finvio's way of giving back to the student developer community.
+      </p>
+      <a class="organizer-contact" href="mailto:finvio.app@gmail.com">
+        ✉ finvio.app@gmail.com
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <span class="section-tag">// frequently asked questions</span>
+  <h2 class="section-title">Got questions?<br/>We've got answers.</h2>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <div class="faq-q">Do I need to register beforehand?</div>
+      <p class="faq-a">Nope! There's no registration required. Just submit your project directly through the Google Form whenever you're ready.</p>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What can I submit?</div>
+      <p class="faq-a">Absolutely anything — a web app, a CLI tool, a game, a script, a Discord bot, a machine learning model. Any language, any framework, any size.</p>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I work in a team?</div>
+      <p class="faq-a">Yes! Teams of any size are welcome. There's no minimum or maximum. Submit together via the Google Form and list all team members.</p>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What if I submit late?</div>
+      <p class="faq-a">No penalties for late submissions! As long as you submit before May 24, 2026, you're good. We designed the hackathon to be stress-free.</p>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How will projects be judged?</div>
+      <p class="faq-a">Projects will be evaluated on creativity, effort, and problem-solving. Don't worry — there's no "boring" project here. Just build and submit.</p>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Who can participate?</div>
+      <p class="faq-a">Any student, anywhere in the world. School student, college student, university student — all are welcome. Unlimited participants.</p>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">When will I get my certificate?</div>
+      <p class="faq-a">Certificates will be distributed to all participants after the submission deadline closes on May 24, 2026. Winners will be announced separately.</p>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">I have more questions — who do I contact?</div>
+      <p class="faq-a">Reach out to us at <a href="mailto:finvio.app@gmail.com" style="color:var(--green)">finvio.app@gmail.com</a> and we'll get back to you as soon as possible.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="deadline-chip">⏰ Deadline: May 24, 2026</div>
+  <h2 class="section-title">Stop thinking.<br/><span style="color:var(--green)">Start building.</span></h2>
+  <p class="section-desc">Your project — big or small, interesting or boring — deserves to be seen. Submit it.</p>
+  <div class="cta-actions">
+    <a class="btn-primary" href="https://forms.gle/UCufHNzthV8aq9ys6" target="_blank">Submit Your Project ↗</a>
+    <a class="btn-secondary" href="mailto:finvio.app@gmail.com">Contact Organizer ✉</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <a href="#" class="footer-logo">finvio <span>hackathon 2026</span></a>
+  </div>
+  <p>Organized by Finvio · <a href="mailto:finvio.app@gmail.com">finvio.app@gmail.com</a></p>
+  <p style="font-size:0.78rem; color: var(--muted)">Deadline: May 24, 2026</p>
+</footer>
+
+<script>
+  // COUNTDOWN TIMER
+  function updateCountdown() {
+    const deadline = new Date('2026-05-24T23:59:59');
+    const now = new Date();
+    const diff = deadline - now;
+    if (diff <= 0) {
+      document.getElementById('days').textContent = '00';
+      document.getElementById('hours').textContent = '00';
+      document.getElementById('minutes').textContent = '00';
+      document.getElementById('seconds').textContent = '00';
+      return;
+    }
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const s = Math.floor((diff % (1000*60)) / 1000);
+    document.getElementById('days').textContent = String(d).padStart(2,'0');
+    document.getElementById('hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('minutes').textContent = String(m).padStart(2,'0');
+    document.getElementById('seconds').textContent = String(s).padStart(2,'0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // SCROLL FADE IN
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.rule-card, .prize-card, .faq-item, .step, .organizer-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
